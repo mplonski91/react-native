@@ -1,23 +1,44 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import BasicButton from "../components/button";
+import { AsyncStorage } from "react-native";
 
 export default class Profile extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      data: {
+        login: "",
+        Password: ""
+      }
+    };
   }
+
+  componentDidMount = async () => {
+    try {
+      const value = await AsyncStorage.getItem("auth");
+      if (value !== null) {
+        // We have data!!
+        this.setState({
+          data: JSON.parse(value)
+        });
+        console.log(value);
+      }
+    } catch (error) {}
+  };
 
   handleLogout = () => {
     this.props.navigation.navigate("Auth");
   };
 
   render() {
+    const { data } = this.state;
     return (
       <View style={styles.container}>
         <Text style={styles.title}>
           {" "}
-          <Text style={styles.titlePrefix}>Login: </Text>unknown
+          <Text style={styles.titlePrefix}>Login: </Text>{" "}
+          {data ? data.login : null}
         </Text>
         <BasicButton
           title="Change Password"

@@ -1,48 +1,75 @@
-import React, {Component} from 'react';
-import {StyleSheet, SafeAreaView} from 'react-native';
-import { createSwitchNavigator, createAppContainer, createBottomTabNavigator, createStackNavigator } from "react-navigation";
+import React, { Component } from "react";
+import { StyleSheet, SafeAreaView } from "react-native";
+import {
+  createSwitchNavigator,
+  createAppContainer,
+  createBottomTabNavigator,
+  createStackNavigator
+} from "react-navigation";
+import { AsyncStorage } from "react-native";
 
-import Welcome from './components/welcome';
-import SignIn from './components/signIn'
-import Dashboard from './views/dashboard';
+import Welcome from "./components/welcome";
+import SignIn from "./components/signIn";
+import Dashboard from "./views/dashboard";
 import Profile from "./views/profile";
 import EditPassword from "./views/editPassword";
 
 const ProfileNavigator = createStackNavigator({
   Profile: Profile,
-  Edit: EditPassword,
+  Edit: EditPassword
 });
 
 const HomeNavigator = createBottomTabNavigator({
   Home: Dashboard,
-  Profile: ProfileNavigator,
+  Profile: ProfileNavigator
 });
 
-const AuthNavigator = createStackNavigator({
-  Welcome: Welcome,
-  SignIn: SignIn,
-}, {
-  headerMode: 'none'
-}
-)
+const AuthNavigator = createStackNavigator(
+  {
+    Welcome: Welcome,
+    SignIn: SignIn
+  },
+  {
+    headerMode: "none"
+  }
+);
 
 const AppNavigator = createSwitchNavigator(
   {
     Home: HomeNavigator,
-    Auth: AuthNavigator,
+    Auth: AuthNavigator
   },
   {
-    initialRouteName: "Home",
+    initialRouteName: "Home"
   }
 );
 
 const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      authData: {
+        login: "maciek",
+        password: "tyson"
+      }
+    };
+  }
+
+  componentDidMount = async () => {
+    const usersData = await AsyncStorage.getItem("auth");
+    if (usersData === null) {
+      try {
+        await AsyncStorage.setItem("auth", JSON.stringify(this.state.authData));
+      } catch (error) {}
+    }
+  };
+
   render() {
     return (
       <SafeAreaView style={styles.container}>
-        <AppContainer/>
+        <AppContainer />
       </SafeAreaView>
     );
   }
@@ -51,5 +78,5 @@ export default class App extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
-  },
+  }
 });

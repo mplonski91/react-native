@@ -8,19 +8,29 @@ import {
   Platform
 } from "react-native";
 import BasicButton from "./button";
+import { AsyncStorage } from "react-native";
 
 class SignIn extends Component {
   state = {
     login: "",
     password: "",
     isPasswordInvalid: false,
-    canSubmit: false
+    canSubmit: false,
+    data: null
   };
 
-  // mockLogin = () => {
-  //   if login==='mail.@mail.pl'
-  //   && password === 'qwerty' => this.props.navigate.push('dashboard')
-  // }
+  componentDidMount() {
+    (getData = async () => {
+      try {
+        const value = await AsyncStorage.getItem("auth");
+        if (value !== null) {
+          this.setState({
+            data: JSON.parse(value)
+          });
+        }
+      } catch (error) {}
+    })();
+  }
 
   validateForm = () => {
     if (
