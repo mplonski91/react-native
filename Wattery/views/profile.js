@@ -18,7 +18,6 @@ export default class Profile extends Component {
     try {
       const value = await AsyncStorage.getItem("auth");
       if (value !== null) {
-        // We have data!!
         this.setState({
           data: JSON.parse(value)
         });
